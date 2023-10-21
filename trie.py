@@ -9,6 +9,7 @@ import os
 class NodeFrame:
     def __init__(self, frame: Frame, p_list: list[float]) -> None:
         self.frame = frame
+        self.p_list = p_list
         self.p_total = self.calculate_p_total(p_list)
         self.p_exactly = self.calculate_p_exactly(p_list)
         
@@ -31,8 +32,7 @@ class NodeFrame:
     def serialize(self) -> dict:
         return {
             'frame': self.frame.serialize(),
-            'p_total': self.p_total,
-            'p_exactly': self.p_exactly,
+            'p_list': self.p_list,
         }
 
 class Node:
@@ -88,12 +88,10 @@ class Trie:
         return output
         
     def deserialize(self, input):
-        def dfs(node: Node, path: list[str]) -> None:
-            if '/'.join(path) in input:
-                node.node_frames = input['/'.join(path)]
-            for word, child in node.children.items():
-                dfs(child, path + [word])
-        dfs(self.root, [])
+        for path, node_frames in input.items():
+            path = path.split('/')
+            for node_frame in node_frames:
+                self.insert(NodeFrame(Frame(id=node_frame['frame']['id']), node_frame['p_list']), path)
         
             
         

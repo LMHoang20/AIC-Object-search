@@ -1,4 +1,5 @@
 from nltk.corpus import wordnet as wn
+from fastapi.responses import JSONResponse
 
 OBJECT_MAP = {
     "stop_sign": "traffic_control",
@@ -6,7 +7,6 @@ OBJECT_MAP = {
     "wine_glass": "glass",
     "potted_plant": "plant",   
 }
-
 
 MULTI_OBJECT_BONUS = 1.0
 
@@ -27,10 +27,15 @@ def parse_query(query: str) -> list[dict]:
     for q in query:
         q = q.split(':')
         if len(q) == 2:
-            result.append({'object': q[0], 'amount': q[1]})
+            result.append({'object': q[0], 'amount': int(q[1])})
         else:
             result.append({'object': q[0], 'amount': 'any'})
     return result
 
     
-        
+def make_response(status: int, message: str, data: dict|None = None) -> dict:
+    return JSONResponse(content={
+        'status': status,
+        'message': message,
+        'data': data,    
+    })
