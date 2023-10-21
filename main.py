@@ -29,8 +29,6 @@ async def startup_event():
     else:
         trie.load_from_dir('data')
         trie.save_to_cache('cache.json')
-        
-    print(trie.serialize())
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):

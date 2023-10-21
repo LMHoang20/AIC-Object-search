@@ -58,7 +58,15 @@ class Trie:
             if word not in node.children:
                 return []
             node = node.children[word]
-        return node.node_frames
+        return self.search_all_children(node)
+    
+    def search_all_children(self, node: Node) -> list[NodeFrame]:
+        result = []
+        if len(node.node_frames) > 0:
+            result.extend(node.node_frames)
+        for child in node.children.values():
+            result.extend(self.search_all_children(child))
+        return result
             
     def load_from_dir(self, dir: str) -> None:
         for path, _, files in os.walk(dir):
