@@ -1,5 +1,6 @@
 from nltk.corpus import wordnet as wn
 from fastapi.responses import JSONResponse
+from google.cloud import storage
 
 OBJECT_MAP = {
     "stop_sign": "traffic_control",
@@ -27,9 +28,9 @@ def parse_query(query: str) -> list[dict]:
     for q in query:
         q = q.split(':')
         if len(q) == 2:
-            result.append({'object': q[0], 'amount': int(q[1])})
+            result.append({'object': q[0].strip(), 'amount': int(q[1].strip())})
         else:
-            result.append({'object': q[0], 'amount': 'any'})
+            result.append({'object': q[0].strip(), 'amount': 'any'})
     return result
 
     
@@ -39,3 +40,11 @@ def make_response(status: int, message: str, data: dict|None = None) -> dict:
         'message': message,
         'data': data,    
     })
+    
+def download_from_bucket(dir: str) -> None:
+    client = storage.Client()
+    bucket = client.get_bucket('thangtd1')
+    blobs = bucket.list_blobs(prefix='object-detection')
+    for blob in blobs:
+        if blob.name.endswith('.json'):
+            blob.download_to_filename(dir + '/' + blob.name[16:])

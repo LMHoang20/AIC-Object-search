@@ -1,6 +1,6 @@
 from searcher import Searcher
 from trie import Trie
-from helper import parse_query, make_response
+from helper import parse_query, make_response, download_from_bucket
 
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
@@ -21,14 +21,6 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
 )
-
-@app.on_event("startup")
-async def startup_event():
-    if os.path.exists('cache.json'):
-        trie.load_from_cache('cache.json')
-    else:
-        trie.load_from_dir('data')
-        trie.save_to_cache('cache.json')
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -62,6 +54,17 @@ async def search(query: Query) -> None:
             'score': round(candidate.score, 2),
         })
     return make_response(status=200, message="OK", data=data)    
+
+@app.on_event("startup")
+async def startup_event():
+    if os.path.exists('cache.json'):
+        trie.load_from_cache('cache.json')
+    else:
+        if not os.path.exists('data'):
+            os.mkdir('data')
+            download_from_bucket('data')
+        trie.load_from_dir('data')
+        trie.save_to_cache('cache.json')
 
 if __name__ == "__main__": 
     import uvicorn
