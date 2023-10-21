@@ -1,5 +1,60 @@
 # AIC-Object-search
 
-## Object Search
+## API
 
-    
+### Health
+`/health` (GET)
+
+### Search:
+`/search` (POST)
+
+#### Request:
+
+##### Body:
+- `query_string`: list of objects to search for, separated by `,`, each object can have an optional `:number` suffix to specify the number of objects to search for, default is `any`.
+- `topk`: return the top `k` results
+
+#### Response:
+- `status`: `int`, HTTP code
+- `message`: `string`, Error message if error
+- `data`: 
+    - `video`: `string`, the name of the video
+    - `frame_name`: `string`, the frame image name
+    - `score`: `int`, the score of the keyframe
+
+#### Example: 
+Search for frames with any number of persons and exactly 2 cows:
+
+Request: `http://localhost:8000/search`
+
+Body: 
+```json
+{
+    "query_text": "person, cow:2",
+    "topk": 3
+}   
+```
+Response: 
+```json
+{
+    "status": 200,
+    "message": "OK",
+    "data": [
+        {
+            "video": "L01_V001",
+            "frame_name": "0006",
+            "score": 12.87
+        },
+        {
+            "video": "L01_V001",
+            "frame_name": "0211",
+            "score": 12.55
+        },
+        {
+            "video": "L01_V001",
+            "frame_name": "0229",
+            "score": 10.33
+        }
+    ]
+}
+```
