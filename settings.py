@@ -1,2 +1,2 @@
-HOST = "localhost"
-PORT = 8000
+HOST = "0.0.0.0"
+PORT = 7860
