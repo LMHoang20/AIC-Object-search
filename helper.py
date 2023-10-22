@@ -33,7 +33,6 @@ def parse_query(query: str) -> list[dict]:
             result.append({'object': q[0].strip(), 'amount': 'any'})
     return result
 
-    
 def make_response(status: int, message: str, data: dict|None = None) -> dict:
     return JSONResponse(content={
         'status': status,

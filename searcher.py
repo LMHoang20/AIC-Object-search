@@ -19,7 +19,7 @@ class Searcher:
             if amount == 'any':
                 this_candidates.extend([Candidate(node_frame.frame, node_frame.p_total) for node_frame in node_frames])
             elif amount == int(amount):
-                this_candidates.extend([Candidate(node_frame.frame, node_frame.p_of(amount)) for node_frame in node_frames])
+                this_candidates.extend([Candidate(node_frame.frame, node_frame.p_of(amount) * amount) for node_frame in node_frames])
             else:
                 raise ValueError('Amount must be an integer or "any"')
             for candidate in this_candidates:
