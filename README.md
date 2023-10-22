@@ -37,24 +37,23 @@ Body:
 Response: 
 ```json
 {
-    "status": 200,
+    "data": 
+    [
+        {"video":"L01_V001","frame_name":"0006.jpg","score":12.87},
+        {"video":"L01_V001","frame_name":"0211.jpg", "score":12.55},
+        {"video":"L01_V001","frame_name":"0229.jpg","score":10.33}
+    ],
     "message": "OK",
-    "data": [
-        {
-            "video": "L01_V001",
-            "frame_name": "0006",
-            "score": 12.87
-        },
-        {
-            "video": "L01_V001",
-            "frame_name": "0211",
-            "score": 12.55
-        },
-        {
-            "video": "L01_V001",
-            "frame_name": "0229",
-            "score": 10.33
-        }
-    ]
+    "status": 200
 }
 ```
+
+#### Note:
+
+- Downloading data from bucket takes around 1 minute.
+
+- Loading the downloaded data into memory takes around 1 minute.
+
+- Loading data from the cache to memory takes around 30 second.
+
+- The number of objects should only be specified when searching for specific objects, e.g. `person:2, cow:3`, searching for generic objects should not have the number specified (you likely would not know the number of objects if you want to search for generic ones anyway), e.g. `animal, furniture`.
