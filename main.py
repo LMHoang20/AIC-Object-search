@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 import settings
 import os
+import time
 
 trie = Trie()
 searcher = Searcher(trie)
@@ -56,28 +57,26 @@ async def search(query: Query) -> None:
     query = parse_query(query.query_text)
 
     candidates = searcher.search(query, topk)
-    data = []
-    for candidate in candidates:
-        data.append(
-            {
-                "video": candidate.frame.video,
-                "frame_name": candidate.frame.frame_name,
-                "score": round(candidate.score, 2),
-            }
-        )
+    data = [candidate.serialize() for candidate in candidates]
     return make_response(status=200, message="OK", data=data)
 
 
 @app.on_event("startup")
 async def startup_event():
     if os.path.exists("cache.json"):
+        start_time = time.time()
         trie.load_from_cache("cache.json")
+        print("Load from cache took %.2f seconds" % (time.time() - start_time))
     else:
         if not os.path.exists("data"):
             os.mkdir("data")
+            start_time = time.time()
             download_from_bucket("data")
+            print("Download from bucket took %.2f seconds" % (time.time() - start_time))
+        start_time = time.time()
         trie.load_from_dir("data")
         trie.save_to_cache("cache.json")
+        print("Load from directory took %.2f seconds" % (time.time() - start_time))
 
 
 if __name__ == "__main__":
