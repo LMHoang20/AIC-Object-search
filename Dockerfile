@@ -17,7 +17,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONIOENCODING=utf-8
 
 RUN pip install -U pip && \
-    pip install --no-cache-dir -r /code/requirements.txt
+    pip install --no-cache-dir -r /code/requirements.txt && \
+    python -m nltk.downloader -d /usr/share/nltk_data wordnet
 
 RUN useradd -m -u 1000 user
 
